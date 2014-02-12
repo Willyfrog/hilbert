@@ -5,4 +5,6 @@
             :url "http://opensource.org/licenses/MIT"}
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [quil "1.6.0"]]
-  :namespace hilbert.core)
+  :namespace hilbert.core
+  :main hilbert.core
+  )
