@@ -1,5 +1,6 @@
 (ns hilbert.setup
-  (:require [quil.core :as quil]))
+  (:require [quil.core :as quil])
+  (:require [hilbert.input :as input]))
 
 (def +default-size+ 48)
 (def +default-width+ 800)
@@ -26,7 +27,16 @@
   (quil/smooth)           ;; antialiasing
   (quil/frame-rate 1)     ;; framerate 1fps
   (quil/background 1)
-  (draw-matrix))
+  (draw-matrix)
+  (quil/set-state! :points (set (input/random-points 100)))) ;; initialize to a set of about 100 points
+
+(defn draw-point [x]
+  (println (format "drawing %d %d" (first x) (second x)))
+  (quil/point (first x) (second x)
+   ))
 
 (defn draw []
-  (println "draaaww!"))
+  (let [points (quil/state :points)]
+    (quil/stroke 200 125 125)
+    (quil/stroke-weight 1)
+    (map draw-point points)))

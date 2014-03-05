@@ -12,7 +12,7 @@
   (exit-on-close (quil/sketch :title "Hilbert curve"
                               :setup setup/setup
                               :draw setup/draw
-                              :size [640 480])))
+                              :size [640 640])))
 
 
 (defn exit-on-close
