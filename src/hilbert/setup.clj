@@ -18,8 +18,8 @@
      (quil/stroke 200)       ;; color del trazo
      (quil/stroke-weight 1)  ;; tamaño del trazo
      (println (format "pintando la matriz x: %d y: %d grid: %d" x y cell-size))
-     (doall (map (fn [j] (quil/line j 0 j y)) (range 0 x cell-size)))
-     (doall (map (fn [j] (quil/line 0 j x j)) (range 0 y cell-size)))
+     (dorun (map (fn [j] (quil/line j 0 j y)) (range 0 x cell-size)))
+     (dorun (map (fn [j] (quil/line 0 j x j)) (range 0 y cell-size)))
      (for [a (range 0 y cell-size)]
        (quil/line 0 a x a))))
 
@@ -27,16 +27,26 @@
   (quil/smooth)           ;; antialiasing
   (quil/frame-rate 1)     ;; framerate 1fps
   (quil/background 1)
-  (draw-matrix)
-  (quil/set-state! :points (set (input/random-points 100)))) ;; initialize to a set of about 100 points
+  (let [point-list (input/random-points 100)]
+    (quil/set-state! :matrix-size +default-size+ 
+                     :points (set point-list)) ;; initialize to a set of about 100 points
+    (println (str (clojure.string/join ", " (map #(format "(%02f, %02f)" (first %) (second %)) point-list)))))
+  ) 
 
-(defn draw-point [x]
-  (println (format "drawing %d %d" (first x) (second x)))
-  (quil/point (first x) (second x)
-   ))
+(defn draw-point [[x y]]
+  ;(println (format "drawing %s %s" x y))
+  (quil/point (* x (quil/width)) (* y (quil/height)))
+  ;(quil/ellipse x y 2 2)
+  )
+
+(defn draw-points [point-list]
+  (quil/stroke 200 100 100)
+  (quil/stroke-weight 5)
+  (dorun (map draw-point point-list))
+  )
 
 (defn draw []
   (let [points (quil/state :points)]
-    (quil/stroke 200 125 125)
-    (quil/stroke-weight 1)
-    (map draw-point points)))
+    (draw-points points)
+    (draw-matrix (quil/state :matrix-size))
+    ))

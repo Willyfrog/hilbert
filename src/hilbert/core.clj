@@ -1,6 +1,7 @@
 (ns hilbert.core
   (:require [quil.core :as quil])
-  (:require [hilbert.setup :as setup]))
+  (:require [hilbert.setup :as setup])
+  (:require [hilbert.input :as input]))
 
 (declare exit-on-close)
 
@@ -12,6 +13,7 @@
   (exit-on-close (quil/sketch :title "Hilbert curve"
                               :setup setup/setup
                               :draw setup/draw
+                              :key-pressed input/read-key
                               :size [640 640])))
 
 
