@@ -6,7 +6,7 @@
 (def +default-size+ 48)
 (def +default-width+ 800)
 (def +default-heigh+ 800)
-(def +num-random-points+ 10)
+(def +num-random-points+ 100)
 
 (defn draw-matrix 
   "Rellena con una matriz"
@@ -35,22 +35,37 @@
     (println (str (clojure.string/join ", " (map #(format "(%02f, %02f)" (first %) (second %)) point-list)))))
   ) 
 
-(defn draw-point [[x y]]
+(defn draw-point
+  [[x y]]
   ;(println (format "drawing %s %s" x y))
   (quil/point (* x (quil/width)) (* y (quil/height)))
   ;(quil/ellipse x y 2 2)
   )
 
+(defn compare-border-points 
+  "if x is further than any of the border points, mark it"
+  [borders x]
+  (loop [[top right bottom left] borders]
+    (cond (< (second x) (second top)) (recur [x right bottom left])
+          (> (first x) (first right)) (recur [top x bottom left])
+          (> (second x) (second bottom)) (recur [top right x left])
+          (< (first x) (first left)) [top right bottom x] ;; no need to recurse
+          :else [top right bottom left])))
+
+(defn get-border-points
+  "get the furthest point on each side"
+  [point-list]
+  (let [init-point (first point-list)]
+    (reduce compare-border-points (into [] (repeat 4 init-point)) (rest point-list))))
+
 (defn draw-points [point-list]
   (quil/stroke 200 100 100)
   (quil/stroke-weight 5)
-  (dorun (map draw-point point-list))
-  )
+  (dorun (map draw-point point-list)))
 
 (defn draw []
   (let [points (quil/state :points)
         cell-size (* (quil/width) (quil/state :cell-size))]
     (println (format "matriz de tamaño %02f" cell-size))
     (draw-points points)
-    (draw-matrix cell-size)
-    ))
+    (draw-matrix cell-size)))
