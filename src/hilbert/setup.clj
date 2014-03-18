@@ -1,10 +1,12 @@
 (ns hilbert.setup
   (:require [quil.core :as quil])
-  (:require [hilbert.input :as input]))
+  (:require [hilbert.input :as input])
+  (:require [hilbert.matrix :as matrix]))
 
 (def +default-size+ 48)
 (def +default-width+ 800)
-(def +default-heigh+ 640)
+(def +default-heigh+ 800)
+(def +num-random-points+ 10)
 
 (defn draw-matrix 
   "Rellena con una matriz"
@@ -17,7 +19,7 @@
   ([x y cell-size]
      (quil/stroke 200)       ;; color del trazo
      (quil/stroke-weight 1)  ;; tamaño del trazo
-     (println (format "pintando la matriz x: %d y: %d grid: %d" x y cell-size))
+     (println (format "pintando la matriz x: %d y: %d grid: %02f" x y cell-size))
      (dorun (map (fn [j] (quil/line j 0 j y)) (range 0 x cell-size)))
      (dorun (map (fn [j] (quil/line 0 j x j)) (range 0 y cell-size)))
      (for [a (range 0 y cell-size)]
@@ -27,9 +29,9 @@
   (quil/smooth)           ;; antialiasing
   (quil/frame-rate 1)     ;; framerate 1fps
   (quil/background 1)
-  (let [point-list (input/random-points 100)]
-    (quil/set-state! :matrix-size +default-size+ 
-                     :points (set point-list)) ;; initialize to a set of about 100 points
+  (let [point-list (input/random-points +num-random-points+)]
+    (quil/set-state! :points (set point-list)
+                     :cell-size (matrix/find-smaller-cell-size point-list)) ;; initialize to a set of about 100 points
     (println (str (clojure.string/join ", " (map #(format "(%02f, %02f)" (first %) (second %)) point-list)))))
   ) 
 
@@ -46,7 +48,9 @@
   )
 
 (defn draw []
-  (let [points (quil/state :points)]
+  (let [points (quil/state :points)
+        cell-size (* (quil/width) (quil/state :cell-size))]
+    (println (format "matriz de tamaño %02f" cell-size))
     (draw-points points)
-    (draw-matrix (quil/state :matrix-size))
+    (draw-matrix cell-size)
     ))
