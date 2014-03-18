@@ -4,7 +4,7 @@
   :license {:name "MIT"
             :url "http://opensource.org/licenses/MIT"}
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [quil "1.6.0"]]
+                 [quil "1.7.0"]]
   :namespace hilbert.core
   :main hilbert.core
   )
